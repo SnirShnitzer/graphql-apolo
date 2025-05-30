@@ -312,7 +312,7 @@ const UserManagement: React.FC = () => {
       {/* User Form Dialog */}
       {showForm && (
         <UserForm
-          user={editingUser}
+          user={editingUser || undefined}
           onSubmit={handleFormSubmit}
           onCancel={handleFormCancel}
           loading={createLoading || updateLoading}

@@ -13,7 +13,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DATABASE_USERNAME || 'postgres',
   password: process.env.DATABASE_PASSWORD || 'password',
   database: process.env.DATABASE_NAME || 'moonshot_db',
-  synchronize: process.env.NODE_ENV === 'development', // Only in development
+  synchronize: true, // Enable for Docker environment
   logging: process.env.NODE_ENV === 'development',
   entities: [User, City],
   migrations: ['src/migrations/*.ts'],
@@ -48,26 +48,37 @@ export const initializeDatabase = async (): Promise<void> => {
  * Creates the predefined Israeli cities if they don't exist
  */
 const seedCities = async (): Promise<void> => {
-  const cityRepository = AppDataSource.getRepository(City);
-  
-  const cities = [
-    'TEL_AVIV',
-    'JERUSALEM', 
-    'HAIFA',
-    'BEER_SHEVA',
-    'NETANYA'
-  ];
-
-  for (const cityName of cities) {
-    const existingCity = await cityRepository.findOne({ 
-      where: { name: cityName } 
-    });
+  try {
+    const cityRepository = AppDataSource.getRepository(City);
     
-    if (!existingCity) {
-      const city = new City(cityName);
-      await cityRepository.save(city);
-      console.log(`🏙️  Seeded city: ${cityName}`);
+    const cities = [
+      'TEL_AVIV',
+      'JERUSALEM', 
+      'HAIFA',
+      'BEER_SHEVA',
+      'NETANYA'
+    ];
+
+    for (const cityName of cities) {
+      try {
+        const existingCity = await cityRepository.findOne({ 
+          where: { name: cityName } 
+        });
+        
+        if (!existingCity) {
+          const city = new City(cityName);
+          await cityRepository.save(city);
+          console.log(`🏙️  Seeded city: ${cityName}`);
+        }
+      } catch (error) {
+        console.log(`🏙️  Creating city: ${cityName}`);
+        const city = new City(cityName);
+        await cityRepository.save(city);
+      }
     }
+  } catch (error) {
+    console.error('❌ Error seeding cities:', error);
+    // Don't throw error to prevent app from crashing
   }
 };
 

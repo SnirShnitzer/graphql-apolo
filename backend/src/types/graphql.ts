@@ -1,10 +1,8 @@
-import { gql } from 'apollo-server-express';
-
 /**
  * GraphQL type definitions for the user management service
  * Includes all types, enums, inputs, queries, and mutations
  */
-export const typeDefs = gql`
+export const typeDefs = `
   # City enum representing the available Israeli cities
   enum CityEnum {
     TEL_AVIV
