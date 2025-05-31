@@ -20,21 +20,20 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ name: 'first_name', type: 'varchar', length: 100 })
   @IsNotEmpty({ message: 'First name is required' })
   @IsString({ message: 'First name must be a string' })
   @Index('IDX_USER_FIRST_NAME')
   firstName!: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ name: 'last_name', type: 'varchar', length: 100 })
   @IsNotEmpty({ message: 'Last name is required' })
   @IsString({ message: 'Last name must be a string' })
   @Index('IDX_USER_LAST_NAME')
   lastName!: string;
 
-  @Column({ type: 'timestamp', precision: 0 })
+  @Column({ name: 'birth_date', type: 'timestamp', precision: 0 })
   @IsNotEmpty({ message: 'Birth date is required' })
-  @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'Birth date must be in YYYY-MM-DD format' })
   birthDate!: Date;
 
   // Foreign key relationship to City
@@ -48,10 +47,10 @@ export class User {
   @JoinColumn({ name: 'city_id' })
   city!: City;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt!: Date;
 
   constructor(

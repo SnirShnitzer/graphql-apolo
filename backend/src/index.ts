@@ -1,5 +1,9 @@
 import 'reflect-metadata';
 import { config } from 'dotenv';
+
+// Load environment variables FIRST, before any other imports
+config();
+
 import express from 'express';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
@@ -9,9 +13,6 @@ import compression from 'compression';
 import { typeDefs } from './types/graphql';
 import { userResolvers } from './resolvers/userResolvers';
 import { initializeDatabase, closeDatabase } from './database/config';
-
-// Load environment variables
-config();
 
 /**
  * Main application class for the Moonshot User Service
