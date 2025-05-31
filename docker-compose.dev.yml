@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  # Backend Service - Replica 1 (Development)
+  backend-1:
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_NAME=moonshot_db
+      - PORT=4000
+      - NODE_ENV=development
+      - LOG_LEVEL=debug
+
+  # Backend Service - Replica 2 (Development)
+  backend-2:
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_NAME=moonshot_db
+      - PORT=4000
+      - NODE_ENV=development
+      - LOG_LEVEL=debug 

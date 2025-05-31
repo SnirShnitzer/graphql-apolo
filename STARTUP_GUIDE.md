@@ -68,7 +68,7 @@ docker-compose down -v
      -e POSTGRES_USER=postgres \
      -e POSTGRES_PASSWORD=password \
      -p 5432:5432 \
-     -d postgres:15-alpine
+     -d postgres:alpine
    ```
 
 5. **Start the backend server:**
