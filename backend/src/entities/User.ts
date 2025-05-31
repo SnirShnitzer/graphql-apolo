@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
   Index 
 } from 'typeorm';
-import { IsNotEmpty, IsString, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsString, IsDateString, Matches } from 'class-validator';
 import { City } from './City';
 
 /**
@@ -32,9 +32,9 @@ export class User {
   @Index('IDX_USER_LAST_NAME')
   lastName!: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'timestamp', precision: 0 })
   @IsNotEmpty({ message: 'Birth date is required' })
-  @IsDateString({}, { message: 'Birth date must be a valid date' })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'Birth date must be in YYYY-MM-DD format' })
   birthDate!: Date;
 
   // Foreign key relationship to City

@@ -87,11 +87,19 @@ export const userResolvers = {
           });
         }
 
-        // Create new user instance
+        // Validate date format
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateRegex.test(data.birthDate)) {
+          throw new GraphQLError('Birth date must be in YYYY-MM-DD format', {
+            extensions: { code: 'VALIDATION_ERROR' }
+          });
+        }
+
+        // Create new user instance with validated date
         const user = new User(
           data.firstName,
           data.lastName,
-          new Date(data.birthDate),
+          new Date(data.birthDate + 'T00:00:00Z'), // Ensure consistent timezone handling
           city.id
         );
 
