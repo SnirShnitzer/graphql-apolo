@@ -7,6 +7,7 @@ config();
 import express from 'express';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -26,11 +27,16 @@ class MoonshotUserService {
   constructor() {
     this.app = express();
     this.port = parseInt(process.env.PORT || '4000');
+    
+    const isDevelopment = process.env.NODE_ENV !== 'production';
+    
     this.server = new ApolloServer({
       typeDefs,
       resolvers: userResolvers,
-      introspection: process.env.NODE_ENV !== 'production',
+      introspection: isDevelopment,
       plugins: [
+        // Apollo Studio landing page in development
+        ...(isDevelopment ? [ApolloServerPluginLandingPageLocalDefault({ embed: true })] : []),
         // Custom plugin for logging
         {
           async requestDidStart() {
