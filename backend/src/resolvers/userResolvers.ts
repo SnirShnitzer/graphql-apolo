@@ -76,6 +76,29 @@ export const userResolvers = {
         const userRepository = AppDataSource.getRepository(User);
         const cityRepository = AppDataSource.getRepository(City);
 
+        // Validate birth date string format before conversion
+        const birthDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!birthDateRegex.test(data.birthDate)) {
+          throw new GraphQLError('Birth date must be in YYYY-MM-DD format', {
+            extensions: { code: 'VALIDATION_ERROR' }
+          });
+        }
+
+        // Convert and validate birth date
+        const birthDate = new Date(data.birthDate);
+        if (isNaN(birthDate.getTime())) {
+          throw new GraphQLError('Birth date must be a valid date', {
+            extensions: { code: 'VALIDATION_ERROR' }
+          });
+        }
+
+        // Check if birth date is not in the future
+        if (birthDate > new Date()) {
+          throw new GraphQLError('Birth date cannot be in the future', {
+            extensions: { code: 'VALIDATION_ERROR' }
+          });
+        }
+
         // Find the city by name
         const city = await cityRepository.findOne({
           where: { name: data.city }
@@ -91,20 +114,24 @@ export const userResolvers = {
         const user = new User(
           data.firstName,
           data.lastName,
-          new Date(data.birthDate),
+          birthDate,
           city.id
         );
 
-        // Validate the user data
-        const errors = await validate(user);
+        // Validate the user data (excluding birth date since we already validated it)
+        const errors = await validate(user, { skipMissingProperties: true });
         if (errors.length > 0) {
-          const errorMessages = errors.map((error: any) => 
-            Object.values(error.constraints || {}).join(', ')
-          ).join('; ');
+          const errorMessages = errors
+            .filter(error => error.property !== 'birthDate') // Skip birth date validation
+            .map((error: any) => 
+              Object.values(error.constraints || {}).join(', ')
+            ).join('; ');
           
-          throw new GraphQLError(`Validation failed: ${errorMessages}`, {
-            extensions: { code: 'VALIDATION_ERROR' }
-          });
+          if (errorMessages) {
+            throw new GraphQLError(`Validation failed: ${errorMessages}`, {
+              extensions: { code: 'VALIDATION_ERROR' }
+            });
+          }
         }
 
         // Save the user
@@ -150,7 +177,33 @@ export const userResolvers = {
         // Update fields if provided
         if (data.firstName !== undefined) user.firstName = data.firstName;
         if (data.lastName !== undefined) user.lastName = data.lastName;
-        if (data.birthDate !== undefined) user.birthDate = new Date(data.birthDate);
+        
+        if (data.birthDate !== undefined) {
+          // Validate birth date string format before conversion
+          const birthDateRegex = /^\d{4}-\d{2}-\d{2}$/;
+          if (!birthDateRegex.test(data.birthDate)) {
+            throw new GraphQLError('Birth date must be in YYYY-MM-DD format', {
+              extensions: { code: 'VALIDATION_ERROR' }
+            });
+          }
+
+          // Convert and validate birth date
+          const birthDate = new Date(data.birthDate);
+          if (isNaN(birthDate.getTime())) {
+            throw new GraphQLError('Birth date must be a valid date', {
+              extensions: { code: 'VALIDATION_ERROR' }
+            });
+          }
+
+          // Check if birth date is not in the future
+          if (birthDate > new Date()) {
+            throw new GraphQLError('Birth date cannot be in the future', {
+              extensions: { code: 'VALIDATION_ERROR' }
+            });
+          }
+
+          user.birthDate = birthDate;
+        }
         
         if (data.city !== undefined) {
           const city = await cityRepository.findOne({
@@ -166,16 +219,20 @@ export const userResolvers = {
           user.cityId = city.id;
         }
 
-        // Validate the updated user data
-        const errors = await validate(user);
+        // Validate the updated user data (excluding birth date since we already validated it)
+        const errors = await validate(user, { skipMissingProperties: true });
         if (errors.length > 0) {
-          const errorMessages = errors.map((error: any) => 
-            Object.values(error.constraints || {}).join(', ')
-          ).join('; ');
+          const errorMessages = errors
+            .filter(error => error.property !== 'birthDate') // Skip birth date validation
+            .map((error: any) => 
+              Object.values(error.constraints || {}).join(', ')
+            ).join('; ');
           
-          throw new GraphQLError(`Validation failed: ${errorMessages}`, {
-            extensions: { code: 'VALIDATION_ERROR' }
-          });
+          if (errorMessages) {
+            throw new GraphQLError(`Validation failed: ${errorMessages}`, {
+              extensions: { code: 'VALIDATION_ERROR' }
+            });
+          }
         }
 
         // Save the updated user
