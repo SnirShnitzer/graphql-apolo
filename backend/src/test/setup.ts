@@ -11,7 +11,7 @@ const TestDataSource = new DataSource({
   host: 'localhost',
   port: 5432,
   username: 'postgres',
-  password: 'postgres',
+  password: 'password',
   database: 'moonshot_test_db',
   synchronize: true, // Use synchronize for tests to avoid migration issues
   logging: false, // Disable logging in tests
