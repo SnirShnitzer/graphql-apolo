@@ -247,7 +247,11 @@ npm test
 
 ### Docker Production Build
 ```bash
-docker-compose -f docker-compose.prod.yml up --build
+# Use the production script
+./scripts/prod.sh
+
+# Or manually:
+docker-compose up --build -d
 ```
 
 ### Health Checks

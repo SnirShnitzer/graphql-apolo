@@ -231,7 +231,12 @@ The application automatically creates the following tables:
    docker-compose logs frontend
    ```
 
-4. **Frontend Build Issues:**
+4. **CORS Issues:**
+   - The backend is configured to handle CORS for Docker environments
+   - Supports both `http://localhost:3000` and container-to-container communication
+   - If you encounter CORS errors, ensure you're using the correct GraphQL endpoint
+
+5. **Frontend Build Issues:**
    ```bash
    cd frontend
    rm -rf node_modules package-lock.json
@@ -276,13 +281,17 @@ The Docker setup includes:
 
 ### Docker Production Build
 ```bash
-docker-compose -f docker-compose.prod.yml up --build
+# Use the production script
+./scripts/prod.sh
+
+# Or manually:
+docker-compose up --build -d
 ```
 
 ### Environment Setup
-- Set `NODE_ENV=production`
+- Set `NODE_ENV=production` (automatically set in Docker)
 - Use secure database credentials
-- Configure proper CORS origins
+- Configure proper CORS origins (already configured for Docker)
 - Set up SSL/TLS certificates
 
 ## 📝 API Documentation
