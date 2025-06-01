@@ -67,9 +67,16 @@ class MoonshotUserService {
     // CORS configuration
     this.app.use(cors({
       origin: process.env.NODE_ENV === 'production' 
-        ? ['https://your-frontend-domain.com'] 
+        ? [
+            'http://localhost:3000',
+            'http://moonshot-frontend:3000',
+            'http://frontend:3000',
+            'https://your-frontend-domain.com'
+          ]
         : ['http://localhost:3000'],
-      credentials: true
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'Apollo-Require-Preflight']
     }));
 
     // Compression middleware
