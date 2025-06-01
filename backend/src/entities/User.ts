@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
   Index 
 } from 'typeorm';
-import { IsNotEmpty, IsString, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsString, IsDateString, Matches } from 'class-validator';
 import { City } from './City';
 
 /**
@@ -20,21 +20,20 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ name: 'first_name', type: 'varchar', length: 100 })
   @IsNotEmpty({ message: 'First name is required' })
   @IsString({ message: 'First name must be a string' })
   @Index('IDX_USER_FIRST_NAME')
   firstName!: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ name: 'last_name', type: 'varchar', length: 100 })
   @IsNotEmpty({ message: 'Last name is required' })
   @IsString({ message: 'Last name must be a string' })
   @Index('IDX_USER_LAST_NAME')
   lastName!: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ name: 'birth_date', type: 'timestamp', precision: 0 })
   @IsNotEmpty({ message: 'Birth date is required' })
-  @IsDateString({}, { message: 'Birth date must be a valid date' })
   birthDate!: Date;
 
   // Foreign key relationship to City
@@ -48,10 +47,10 @@ export class User {
   @JoinColumn({ name: 'city_id' })
   city!: City;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamp' })
   updatedAt!: Date;
 
   constructor(

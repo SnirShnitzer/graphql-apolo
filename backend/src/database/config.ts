@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { User } from '../entities/User';
 import { City } from '../entities/City';
+import { InitialSchema1709123456789 } from '../migrations/1709123456789-InitialSchema';
 
 /**
  * Database configuration for TypeORM
@@ -8,16 +9,17 @@ import { City } from '../entities/City';
  */
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DATABASE_HOST || 'localhost',
+  host: process.env.DATABASE_HOST,
   port: parseInt(process.env.DATABASE_PORT || '5432'),
-  username: process.env.DATABASE_USERNAME || 'postgres',
-  password: process.env.DATABASE_PASSWORD || 'password',
-  database: process.env.DATABASE_NAME || 'moonshot_db',
-  synchronize: true, // Enable for Docker environment
+  username: process.env.DATABASE_USERNAME,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME,
+  synchronize: false, // Disable synchronize in favor of migrations
   logging: process.env.NODE_ENV === 'development',
   entities: [User, City],
-  migrations: ['src/migrations/*.ts'],
-  subscribers: ['src/subscribers/*.ts'],
+  migrations: [InitialSchema1709123456789],
+  migrationsRun: true, // Automatically run migrations on startup
+  migrationsTableName: 'migrations',
   // Connection pool settings for performance
   extra: {
     connectionLimit: 10,
